@@ -1,6 +1,7 @@
-"use client"; // Mark the component as a Client Component
+"use client"; 
 import { useParams } from "next/navigation";
 import Image from 'next/image'
+import { useState } from "react";
 
 interface BlogPost {
     title: string
@@ -17,7 +18,7 @@ const BlogPost = () => {
     const params = useParams()
     const { id } = params
 
-    // Dummy data for the example (Replace with API call or database fetch)
+    
     const blogPosts = {
         1: {
             title: "What is Ai",
@@ -185,8 +186,25 @@ It is a fully-developed and robust cloud solution that does not require installa
         },
     };
 
-      // Convert id to a number and safely access the post
+      
   const post = blogPosts[Number(id) as keyof typeof blogPosts];
+
+
+const [comments, setComments] = useState<{ name: string; comment: string }[]>(
+    []
+  );
+  const [newName, setNewName] = useState<string>("");
+  const [newComment, setNewComment] = useState<string>("");
+
+  
+  const addComment = () => {
+    if (newName.trim() && newComment.trim()) {
+      setComments([...comments, { name: newName, comment: newComment }]);
+      setNewName("");
+      setNewComment("");
+    }
+  };
+
 
     if (!post) {
         return (
@@ -198,13 +216,13 @@ It is a fully-developed and robust cloud solution that does not require installa
 
     return (
         <article className="relative bg-gradient-to-br from-teal-50 via-purple-50 to-pink-50 min-h-screen">
-            {/* Animated background elements */}
+            
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-teal-300/20 to-purple-300/20 rounded-full blur-3xl animate-blob" />
                 <div className="absolute top-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-300/20 to-pink-300/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
             </div>
 
-            {/* Content container */}
+            
             <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24">
                 <header className="text-center mb-16">
                     <h1 className="text-4xl sm:text-5xl font-bold mb-6 bg-gradient-to-r from-teal-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
@@ -232,6 +250,48 @@ It is a fully-developed and robust cloud solution that does not require installa
                     ))}
                 </div>
             </div>
+            <div className="bg-white shadow-lg w-full max-w-md mx-auto p-6 rounded-lg mt-6">
+        <h2 className="text-lg font-bold mb-4 text-gray-800">Comments</h2>
+        {comments.length === 0 ? (
+          <p className="text-gray-600">No comments yet. Be the first to comment!</p>
+        ) : (
+          <ul className="space-y-4">
+            {comments.map((comment, index) => (
+              <li
+                key={index}
+                className="bg-gray-100 p-3 rounded shadow-md text-gray-800"
+              >
+                <p className="font-bold">{comment.name}:</p>
+                <p>{comment.comment}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="mt-4">
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="Your name..."
+            className="border border-gray-300 p-2 rounded w-full mb-2"
+          />
+  <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write your comment..."
+            className="border border-gray-300 p-2 rounded w-full mb-2"
+          />
+          <button
+            onClick={addComment}
+            className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
+          >
+            Add Comment
+          </button>
+        </div>
+      </div>
+   
+
         </article>
     )
 }
